@@ -1,0 +1,24 @@
+
+@mixin keyframes($animation-name,$time,$repetitions,$animation-mode:"initial") {
+    @-webkit-keyframes #{$animation-name} {
+        @content;
+    }
+    @-moz-keyframes #{$animation-name} {
+        @content;
+    }
+    @-ms-keyframes #{$animation-name} {
+        @content;
+    }
+    @-o-keyframes #{$animation-name} {
+        @content;
+    }
+    @keyframes #{$animation-name} {
+        @content;
+    }
+
+    .#{$animation-name} {
+      animation: #{$animation-name} $time !important;
+      animation-iteration-count:$repetitions !important;
+      animation-fill-mode: unquote($animation-mode) !important;
+    }
+}
