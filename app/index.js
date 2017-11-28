@@ -9,7 +9,7 @@ import thunk from 'redux-thunk';
 import rootReducer from './reducer/rootReducer';
 import {initialState} from './reducer/initialState';
 import 'semantic-ui-css/semantic.min.css';
-
+require.context("../mock-data", true, /.*/);
 
 const store = createStore(rootReducer,(sessionStorage.savedReduxState
   ? JSON.parse(sessionStorage.savedReduxState)
@@ -20,7 +20,7 @@ window.onunload = function () {
 }
 
 window.APP = {
-  apiEndpoint : './'
+  apiEndpoint : './' //important to end with /
 };
 
 window.onload = ()=>{

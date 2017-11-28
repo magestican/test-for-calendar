@@ -1,6 +1,8 @@
 
 export  let activityLogReducerInitialState = {
-  activityLogData : {}
+  activityLogList : [],
+  activityLogState : {},
+  gettingActivityLog : false
 }
 
 export let initialState = { activityLogReducer : activityLogReducerInitialState }
