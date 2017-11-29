@@ -20,10 +20,14 @@ export default class ActivityLog extends Component {
     this.props.dispatch(updateActivityLogState({selectedActivityItem: activityItem}));
   }
 
-  selectedDateChanged = (ev)=>{
-    debugger
-    this.props.dispatch(updateActivityLogState({currentlySelectedDateFilter: ev.unix()}));
+  selectedDateStartChanged = (ev) => {
+    this.props.dispatch(updateActivityLogState({currentlySelectedDateFilterStart: ev.unix() * 1000}));
   }
+  selectedDateEndChanged = (ev) => {
+    this.props.dispatch(updateActivityLogState({currentlySelectedDateFilterEnd: ev.unix()} * 1000));
+  }
+
+
 
   updateSearchTerm = (ev) => {
     this.props.dispatch(updateActivityLogState({currentSearch: ev.target.value}));
@@ -32,7 +36,7 @@ export default class ActivityLog extends Component {
   getActivityItem = (activityItem) => {
     let {selectedActivityItem} = this.props.activityLogState;
     let getDate = () => {
-      let parsedDate = moment.unix(activityItem.date);
+      let parsedDate = moment(activityItem.date);
       if (parsedDate)
         return parsedDate.format('MMMM DD, YYYY - HH:MM');
       else
@@ -40,7 +44,9 @@ export default class ActivityLog extends Component {
       }
     let selected = activityItem.id == selectedActivityItem.id;
 
-    return <div onClick={this.selectActivityItem.bind(this, activityItem)} className={selected ? 'ui row selected' : 'ui row'}>
+    return <div onClick={this.selectActivityItem.bind(this, activityItem)} className={selected
+      ? 'ui row selected'
+      : 'ui row'}>
       <div className="status column">{activityItem.status}</div>
       <div className="date column">{getDate()}</div>
       <div className="actions column">{activityItem.action}</div>
@@ -67,7 +73,7 @@ export default class ActivityLog extends Component {
     });
     actionDropdownOptions = actionDropdownOptions.concat(dynamicActionsTranslatedIntoDropdownData);
 
-    return <Dropdown placeholder='All actions' selection options={actionDropdownOptions}/>
+    return <Dropdown onChange={this.selectedActionFilter} placeholder='All actions' selection options={actionDropdownOptions}/>
   }
 
   getStatusDropdown() {
@@ -86,20 +92,49 @@ export default class ActivityLog extends Component {
         value: 'allStatuses'
       }
     ];
-    return <Dropdown placeholder='All statuses' selection options={statusDropdownOptions}/>
+    return <Dropdown onChange={this.selectedStatusFilter} placeholder='All statuses' selection options={statusDropdownOptions}/>
   }
 
+  selectedStatusFilter = (ev, dataObject) => {
+    this.props.dispatch(updateActivityLogState({currentlySelectedStatusFilter: dataObject.value}));
+  }
 
+  selectedActionFilter = (ev, dataObject) => {
+    this.props.dispatch(updateActivityLogState({currentlySelectedActionFilter: dataObject.value}));
+  }
 
   render() {
     let {activityLogList} = this.props;
 
-    let {currentlySelectedDateFilter, currentSearch, selectedActivityItem} = this.props.activityLogState;
+    let {currentlySelectedDateFilterStart, currentSearch, selectedActivityItem, currentlySelectedStatusFilter, currentlySelectedActionFilter,currentlySelectedDateFilterEnd} = this.props.activityLogState;
 
     let getActivityItemIfItMatchesSearchAndFilters = (item) => {
       //create metadata :
       let searchString = item.status + (moment.unix(item.date).format('MMMM DD, YYYY - HH:MM') || '') + item.whoUser + item.action;
-      return searchString.toLowerCase().indexOf(currentSearch) > -1;
+      let matchesSearch = false;
+      let matchesStatus = false;
+      let matchesDate = false;
+      let matchesAction = false;
+      if (searchString) {
+        matchesSearch = searchString.toLowerCase().indexOf(currentSearch) > -1;
+      }
+
+      if (currentlySelectedStatusFilter) {
+        if (item.status.toLowerCase() == currentlySelectedStatusFilter || currentlySelectedStatusFilter == 'allStatuses') {
+          matchesStatus = true
+        }
+      }
+
+      if (currentlySelectedActionFilter) {
+        if (item.action == currentlySelectedActionFilter || currentlySelectedActionFilter == 'allActions') {
+          matchesAction = true
+        }
+      }
+
+      if (moment(moment(parseInt(item.date,0)).toString()).isBetween(moment(currentlySelectedDateFilterStart).toString(),moment(currentlySelectedDateFilterEnd).toString()) || currentlySelectedDateFilterStart == currentlySelectedDateFilterEnd) {
+        matchesDate = true
+      }
+      return matchesSearch && matchesStatus && matchesDate && matchesAction;
     }
 
     let getItemsFiltered = () => {
@@ -122,7 +157,8 @@ export default class ActivityLog extends Component {
                 {this.getStatusDropdown()}
               </div>
               <div className="column">
-                <DatePicker selected={moment.unix(currentlySelectedDateFilter)} onChange={this.selectedDateChanged}/>
+                <DatePicker selectsStart selected={moment(currentlySelectedDateFilterStart)} startDate={moment(currentlySelectedDateFilterStart)} endDate={moment(currentlySelectedDateFilterEnd)} onChange={this.selectedDateStartChanged}/>
+                <DatePicker className="invisible" selected={moment(currentlySelectedDateFilterEnd)} selectsEnd startDate={moment(currentlySelectedDateFilterStart)} endDate={moment(currentlySelectedDateFilterEnd)} onChange={this.selectedDateEndChanged}/>
               </div>
               <div className="column">
                 <div className="ui icon input">

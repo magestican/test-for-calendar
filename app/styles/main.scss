@@ -42,6 +42,12 @@ $hover-color:#efefef;
 
 
 /*global*/
+
+.invisible{
+  visibility: hidden;
+  width:0px !important;
+  height:0px !important;
+}
 .react-datepicker-wrapper input{
   margin: 0;
     max-width: 100%;

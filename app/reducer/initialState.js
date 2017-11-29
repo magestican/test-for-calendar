@@ -4,9 +4,10 @@ export  let activityLogReducerInitialState = {
   activityLogState : {
     selectedActivityItem:{},
     currentSearch: '',
-    currentlySelectedDateFilter : moment().unix(), //data can only be stored in localstorage in unix format, in order to be retrieved from cache
-    currentlySelectedStatusFilter : '',
-    currentlySelectedActionFilter : ''
+    currentlySelectedDateFilterEnd : moment().unix() * 1000,
+    currentlySelectedDateFilterStart : moment().unix() * 1000, //data can only be stored in localstorage in unix format, in order to be retrieved from cache
+    currentlySelectedStatusFilter : 'allStatuses',
+    currentlySelectedActionFilter : 'allActions'
   },
   gettingActivityLog : false
 }
