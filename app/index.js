@@ -9,6 +9,7 @@ import thunk from 'redux-thunk';
 import rootReducer from './reducer/rootReducer';
 import {initialState} from './reducer/initialState';
 import 'semantic-ui-css/semantic.min.css';
+import moment from 'moment'
 require.context("../mock-data", true, /.*/);
 
 const store = createStore(rootReducer,(sessionStorage.savedReduxState
@@ -18,6 +19,7 @@ const store = createStore(rootReducer,(sessionStorage.savedReduxState
 window.onunload = function () {
   sessionStorage.savedReduxState = JSON.stringify(store.getState());
 }
+
 
 window.APP = {
   apiEndpoint : './' //important to end with /

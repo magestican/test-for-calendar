@@ -1,6 +1,7 @@
 [{
+    "id" : "1",
     "status": "Success",
-    "date": "1511851961000",
+    "date": "1511851961",
     "action": "edit form",
     "whoUser": "Nick Jhones",
     "otherWhoUsers": ["Marc", "Sebastian", "Mike"],
@@ -16,8 +17,9 @@
     }
   },
   {
+    "id" : "2",
     "status": "Failed",
-    "date": "1511851961000",
+    "date": "1511851961",
     "action": "booked",
     "whoUser": "Christian Doe",
     "otherWhoUsers": ["Boris", "Nick"],
@@ -33,8 +35,9 @@
     }
   },
   {
+    "id" : "3",
     "status": "Success",
-    "date": "1511851961000",
+    "date": "1511851961",
     "action": "cancelled",
     "whoUser": "Sebastian Bornia",
     "otherWhoUsers": [],
@@ -50,8 +53,9 @@
     }
   },
   {
+    "id" : "4",
     "status": "Success",
-    "date": "1511851961000",
+    "date": "1511851961",
     "action": "added charge",
     "whoUser": "Nick Jhones",
     "otherWhoUsers": [],
@@ -67,8 +71,9 @@
     }
   },
   {
+    "id" : "5",
     "status": "Success",
-    "date": "1511851961000",
+    "date": "1511851961",
     "action": "upgraded plan",
     "whoUser": "Nick Jhones",
     "otherWhoUsers": [],
