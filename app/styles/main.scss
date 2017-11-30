@@ -1,41 +1,10 @@
+$hover-color: #efefef;
+$app-color: #629644;
+
 @import "mixins";
 @import "animations";
 @import "global";
-body {
-  font-family: 'Helvetica';
-  background-color: white;
+body{
+  background-color: #e7eaee;
 }
-
-$hover-color:#efefef;
-
-.activity-log {
-  .header-section{
-    font-weight: bold;
-  }
-  .left-section{
-    float:left;
-    display:inline-block;
-    max-width: 800px;
-    .ui.row:not(.header-section){
-      cursor: pointer;
-    }
-    .ui.row:not(.header-section):not(.selected):hover{
-      background-color: $hover-color;
-    }
-    .ui.row.selected{
-      background-color:#629644;
-    }
-
-  }
-  .right-section{
-    float:left;
-    display:inline-block;
-  }
-
-  .ui.dropdown {
-    max-width:200px !important;
-  }
-  .ui.input{
-    max-width:200px !important;
-  }
-}
+@import "activity-log-page"

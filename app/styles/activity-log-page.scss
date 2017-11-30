@@ -1,0 +1,107 @@
+.activity-log {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  .title{
+    font-size:16px;
+    font-weight: bold;
+  }
+  .header-section {
+    font-weight: bold;
+
+    .divider {
+      position: static;
+      width: 100%;
+      transform: translate(0,13px);
+      height: 1px;
+      background-color: #eaeaea;
+    }
+  }
+
+  .left-section {
+    float: left;
+    display: inline-block;
+    max-width: 800px;
+    margin-right: 18px;
+
+    .top-container{
+      height: 63px;
+    }
+
+    .middle-container{
+      border-radius:5px;
+      background-color:white;
+      .ui.row{
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+    }
+    .ui.row:not(.header-section) {
+      cursor: pointer;
+    }
+
+    .ui.row:not(.header-section):not(.selected):hover {
+      background-color: $hover-color;
+    }
+
+    .ui.row.selected {
+      background-color: $app-color;
+
+      color: white;
+    }
+
+    .failed.status {
+      color: #d84e42;
+    }
+
+    .actions.column {
+      font-weight: bold;
+    }
+  }
+
+  .right-section {
+    .top-container{
+      height: 63px;
+      padding-top: 19px;
+      .checkbox-container{
+        float:right;
+        margin-left:10px;
+        .checkbox{
+          margin-left:10px;
+          transform: translateY(5px);
+        }
+      }
+    }
+    .bottom-container{
+      padding-top:10px;
+      padding-left:20px;
+      padding-right:20px;
+      padding-bottom: 10px;
+      min-width: 250px;
+      border-radius:5px;
+      background-color: white;
+      float: left;
+      display: inline-block;
+      .divider {
+        position: static;
+        width: 100%;
+        transform: translate(0,13px);
+        height: 1px;
+        background-color: #eaeaea;
+      }
+
+      .sub-title{
+        font-weight: bold;
+        margin-top:20px
+      }
+    }
+  }
+
+  .ui.dropdown {
+    max-width: 200px !important;
+  }
+
+  .ui.input {
+    max-width: 200px !important;
+  }
+}

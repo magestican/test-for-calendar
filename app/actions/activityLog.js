@@ -5,7 +5,7 @@ export const UPDATED_ACTIVITY_LOG_STATE = "UPDATED_ACTIVITY_LOG_STATE";
 export let getActivityLog = ()=>{
     return (dispatch) => {
       dispatch({type:GET_ACTIVITY_LOG})
-      fetch(`${window.APP.apiEndpoint}activityLog.json`,{method : 'GET'}).then((res)=>{
+      fetch(`${window.ActivityAPP.apiEndpoint + window.ActivityAPP.apis.activityLog}`,{method : 'GET'}).then((res)=>{
         return res.json().then(data => {
           console.log(data);
           return dispatch({ type: GOT_ACTIVITY_LOG, data : data });

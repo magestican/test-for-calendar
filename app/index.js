@@ -19,11 +19,15 @@ const store = createStore(rootReducer,(sessionStorage.savedReduxState
 window.onunload = function () {
   sessionStorage.savedReduxState = JSON.stringify(store.getState());
 }
+if (!window.ActivityAPP){
+  window.ActivityAPP = {
+    apiEndpoint : './',//important to end with /
+    apis: {
+      activityLog : 'activityLog.json'
+    }
+  };
+}
 
-
-window.APP = {
-  apiEndpoint : './' //important to end with /
-};
 
 window.onload = ()=>{
   ReactDOM.render(

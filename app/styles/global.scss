@@ -4,6 +4,18 @@
   width:0px !important;
   height:0px !important;
 }
+.ui.toggle.checkbox input:checked ~ .box:before, .ui.toggle.checkbox input:checked ~ label:before {
+    background-color: $app-color !important;
+}
+.ui.toggle.checkbox input:focus:checked ~ .box:before, .ui.toggle.checkbox input:focus:checked ~ label:before {
+      background-color: $app-color !important;
+}
+
+
+
+
+
+
 .react-datepicker-wrapper input{
   margin: 0;
     max-width: 100%;

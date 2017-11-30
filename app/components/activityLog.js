@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import {getActivityLog, updateActivityLogState} from '../actions/activityLog'
 import {connect} from 'react-redux'
-import {Dropdown} from 'semantic-ui-react'
+import {Dropdown,Checkbox} from 'semantic-ui-react'
 import moment from 'moment';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -21,13 +21,13 @@ export default class ActivityLog extends Component {
   }
 
   selectedDateStartChanged = (ev) => {
-    this.props.dispatch(updateActivityLogState({currentlySelectedDateFilterStart: ev.unix() * 1000}));
+    this.props.dispatch(updateActivityLogState({
+      currentlySelectedDateFilterStart: ev.unix() * 1000
+    }));
   }
   selectedDateEndChanged = (ev) => {
     this.props.dispatch(updateActivityLogState({currentlySelectedDateFilterEnd: ev.unix()} * 1000));
   }
-
-
 
   updateSearchTerm = (ev) => {
     this.props.dispatch(updateActivityLogState({currentSearch: ev.target.value}));
@@ -47,7 +47,9 @@ export default class ActivityLog extends Component {
     return <div onClick={this.selectActivityItem.bind(this, activityItem)} className={selected
       ? 'ui row selected'
       : 'ui row'}>
-      <div className="status column">{activityItem.status}</div>
+      <div className={activityItem.status == 'Failed'
+        ? 'failed status column'
+        : 'status column'}>{activityItem.status}</div>
       <div className="date column">{getDate()}</div>
       <div className="actions column">{activityItem.action}</div>
       <div className="who column">{activityItem.whoUser}</div>
@@ -106,7 +108,14 @@ export default class ActivityLog extends Component {
   render() {
     let {activityLogList} = this.props;
 
-    let {currentlySelectedDateFilterStart, currentSearch, selectedActivityItem, currentlySelectedStatusFilter, currentlySelectedActionFilter,currentlySelectedDateFilterEnd} = this.props.activityLogState;
+    let {
+      currentlySelectedDateFilterStart,
+      currentSearch,
+      selectedActivityItem,
+      currentlySelectedStatusFilter,
+      currentlySelectedActionFilter,
+      currentlySelectedDateFilterEnd
+    } = this.props.activityLogState;
 
     let getActivityItemIfItMatchesSearchAndFilters = (item) => {
       //create metadata :
@@ -131,11 +140,31 @@ export default class ActivityLog extends Component {
         }
       }
 
-      if (moment(moment(parseInt(item.date,0)).toString()).isBetween(moment(currentlySelectedDateFilterStart).toString(),moment(currentlySelectedDateFilterEnd).toString()) || currentlySelectedDateFilterStart == currentlySelectedDateFilterEnd) {
+      if (moment(moment(parseInt(item.date, 0)).toString()).isBetween(moment(currentlySelectedDateFilterStart).toString(), moment(currentlySelectedDateFilterEnd).toString()) || currentlySelectedDateFilterStart == currentlySelectedDateFilterEnd) {
         matchesDate = true
       }
       return matchesSearch && matchesStatus && matchesDate && matchesAction;
     }
+    let capitalizeFirstLetter = (string) => {
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    let getListOfUsers = () => {
+      if (selectedActivityItem.otherWhoUsers.length > 0)
+        return (
+          <div>
+            <div className="sub-title">Users involved in action</div>
+            <div>
+              {selectedActivityItem.otherWhoUsers.map((o) => {
+                return o;
+              })}
+            </div>
+
+          </div>
+        )
+      else
+        return '';
+      }
 
     let getItemsFiltered = () => {
 
@@ -149,7 +178,7 @@ export default class ActivityLog extends Component {
       <div className="activity-log">
         <div className="left-section">
           <div className="ui grid">
-            <div className="four column row">
+            <div className="ui four column row top-container">
               <div className="column">
                 {this.getActionDropdown()}
               </div>
@@ -168,18 +197,54 @@ export default class ActivityLog extends Component {
               </div>
             </div>
           </div>
-          <div className="ui four column grid ">
+          <div className="ui four column grid middle-container">
             <div className="ui row header-section">
-              <div className="ui column">status</div>
-              <div className="ui column">date</div>
-              <div className="ui column">actions</div>
-              <div className="ui column">who</div>
+              <div className="ui column title">status
+                <i className="ui icon angle up"></i>
+                <i className="ui icon angle down"></i>
+              </div>
+              <div className="ui column title">date
+                <i className="ui icon angle up"></i>
+                <i className="ui icon angle down"></i>
+              </div>
+              <div className="ui column title">actions
+                <i className="ui icon angle up"></i>
+                <i className="ui icon angle down"></i>
+              </div>
+              <div className="ui column title">who
+                <i className="ui icon angle up"></i>
+                <i className="ui icon angle down"></i>
+              </div>
+              <div className="divider"></div>
             </div>
             {getItemsFiltered()}
           </div>
         </div>
         <div className="right-section">
-          {selectedActivityItem.whoUser}
+
+          <div className="top-container">
+          <div className="checkbox-container">
+            Auto-retry
+          <Checkbox checked toggle />
+          </div>
+          </div>
+          <div className="bottom-container">
+            <div className="title">details</div>
+            <div className="divider"></div>
+            <div className="sub-title">Date</div>
+            <div>
+              {(moment.unix(selectedActivityItem.date).format('MMMM DD, YYYY - HH:MM') || '')}
+            </div>
+            <div className="sub-title">Action</div>
+            <div>{capitalizeFirstLetter(selectedActivityItem.action)}</div>
+            <div className="sub-title">User who initiated action</div>
+            <div>{selectedActivityItem.whoUser}</div>
+            {getListOfUsers()}
+
+            <div className="metadata-field">
+
+            </div>
+          </div>
         </div>
       </div>
     )
