@@ -14,6 +14,7 @@ export default function cvReducer(state = activityLogReducerInitialState, action
     case  UPDATED_ACTIVITY_LOG_STATE :
     clonedState = clone(state.activityLogState);
     clonedState = objectAssign(clonedState,action.data);
+    debugger
       return objectAssign({},state,{'activityLogState' : clonedState });
     default:
       return state;

@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import {getActivityLog, updateActivityLogState} from '../actions/activityLog'
 import {connect} from 'react-redux'
-import {Dropdown,Checkbox} from 'semantic-ui-react'
+import {Dropdown, Checkbox, Input,Button,Modal} from 'semantic-ui-react'
 import moment from 'moment';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -26,7 +26,8 @@ export default class ActivityLog extends Component {
     }));
   }
   selectedDateEndChanged = (ev) => {
-    this.props.dispatch(updateActivityLogState({currentlySelectedDateFilterEnd: ev.unix()} * 1000));
+
+    this.props.dispatch(updateActivityLogState({currentlySelectedDateFilterEnd: ev.unix() * 1000} ));
   }
 
   updateSearchTerm = (ev) => {
@@ -44,7 +45,7 @@ export default class ActivityLog extends Component {
       }
     let selected = activityItem.id == selectedActivityItem.id;
 
-    return <div onClick={this.selectActivityItem.bind(this, activityItem)} className={selected
+    return <div key={activityItem.id} onClick={this.selectActivityItem.bind(this, activityItem)} className={selected
       ? 'ui row selected'
       : 'ui row'}>
       <div className={activityItem.status == 'Failed'
@@ -105,6 +106,12 @@ export default class ActivityLog extends Component {
     this.props.dispatch(updateActivityLogState({currentlySelectedActionFilter: dataObject.value}));
   }
 
+  handleShowDateSelector =(show) =>{
+    this.props.dispatch(updateActivityLogState({
+      calendarControllerVisible : show
+    }))
+  }
+
   render() {
     let {activityLogList} = this.props;
 
@@ -114,7 +121,8 @@ export default class ActivityLog extends Component {
       selectedActivityItem,
       currentlySelectedStatusFilter,
       currentlySelectedActionFilter,
-      currentlySelectedDateFilterEnd
+      currentlySelectedDateFilterEnd,
+      calendarControllerVisible
     } = this.props.activityLogState;
 
     let getActivityItemIfItMatchesSearchAndFilters = (item) => {
@@ -146,20 +154,32 @@ export default class ActivityLog extends Component {
       return matchesSearch && matchesStatus && matchesDate && matchesAction;
     }
     let capitalizeFirstLetter = (string) => {
+      string = string || '';
       return string.charAt(0).toUpperCase() + string.slice(1);
     }
-
+    let getParsedMetadata = (actionMetadata) => {
+      let metadataItems = [];
+      for (var property in actionMetadata) {
+        if (actionMetadata.hasOwnProperty(property)) {
+          metadataItems.push(<div className="metadata-item">
+            {property}: {actionMetadata[property] + ''}
+          </div>)
+        }
+      }
+      return metadataItems;
+    }
     let getListOfUsers = () => {
-      if (selectedActivityItem.otherWhoUsers.length > 0)
+      if (selectedActivityItem.otherWhoUsers && selectedActivityItem.otherWhoUsers.length > 0)
         return (
           <div>
             <div className="sub-title">Users involved in action</div>
             <div>
-              {selectedActivityItem.otherWhoUsers.map((o,i) => {
-                return o + (i == selectedActivityItem.otherWhoUsers.length -1 ? '' : ', ');
+              {selectedActivityItem.otherWhoUsers.map((o, i) => {
+                return o + (i == selectedActivityItem.otherWhoUsers.length - 1
+                  ? ''
+                  : ', ');
               })}
             </div>
-
           </div>
         )
       else
@@ -174,22 +194,44 @@ export default class ActivityLog extends Component {
         return this.getActivityItem(o);
       })
     }
+
+    let getCalendarController = () =>{
+
+      return (<Modal onClose={this.handleShowDateSelector.bind(this,false)} size="tiny" open={calendarControllerVisible}>
+          <Modal.Header>
+            Select a date range
+          </Modal.Header>
+          <Modal.Content>
+            <div className="field">
+                <DatePicker selectsStart selected={moment(currentlySelectedDateFilterStart)} startDate={moment(currentlySelectedDateFilterStart)} endDate={moment(currentlySelectedDateFilterEnd)} onChange={this.selectedDateStartChanged}/>
+            </div>
+            <div className="field">
+              <DatePicker  selected={moment(currentlySelectedDateFilterEnd)} selectsEnd startDate={moment(currentlySelectedDateFilterStart)} endDate={moment(currentlySelectedDateFilterEnd)} onChange={this.selectedDateEndChanged}/>
+            </div>
+          </Modal.Content>
+          <Modal.Actions>
+            <Button onClick={this.handleShowDateSelector.bind(this,false)} negative>
+              Cancel
+            </Button>
+          </Modal.Actions>
+        </Modal>)
+    }
     return (
       <div className="activity-log">
+        {getCalendarController()}
         <div className="left-section">
           <div className="ui grid">
-            <div className="ui four column row top-container">
-              <div className="column">
+            <div className="top-container">
+              <div className="field">
                 {this.getActionDropdown()}
               </div>
-              <div className="column">
+              <div className="field">
                 {this.getStatusDropdown()}
               </div>
-              <div className="column">
-                <DatePicker selectsStart selected={moment(currentlySelectedDateFilterStart)} startDate={moment(currentlySelectedDateFilterStart)} endDate={moment(currentlySelectedDateFilterEnd)} onChange={this.selectedDateStartChanged}/>
-                <DatePicker className="invisible" selected={moment(currentlySelectedDateFilterEnd)} selectsEnd startDate={moment(currentlySelectedDateFilterStart)} endDate={moment(currentlySelectedDateFilterEnd)} onChange={this.selectedDateEndChanged}/>
+              <div className="field">
+                <Button basic onClick={this.handleShowDateSelector.bind(this,true)} content={moment(currentlySelectedDateFilterStart).format('MM/DD/YY') + '-' + moment(currentlySelectedDateFilterEnd).format('MM/DD/YY')  } icon='calendar' labelPosition='right' />
               </div>
-              <div className="column">
+              <div className="field">
                 <div className="ui icon input">
                   <input defaultValue={currentSearch} onChange={this.updateSearchTerm} type="text" placeholder="Search..."/>
                   <i className="search icon"></i>
@@ -223,10 +265,10 @@ export default class ActivityLog extends Component {
         <div className="right-section">
 
           <div className="top-container">
-          <div className="checkbox-container">
-            Auto-retry
-          <Checkbox checked toggle />
-          </div>
+            <div className="checkbox-container">
+              Auto-retry
+              <Checkbox checked toggle/>
+            </div>
           </div>
           <div className="bottom-container">
             <div className="title">details</div>
@@ -242,7 +284,12 @@ export default class ActivityLog extends Component {
             {getListOfUsers()}
 
             <div className="metadata-field">
-
+              <div className="sub-title">Input fields:</div>
+              {getParsedMetadata(selectedActivityItem.actionInputMetadata)}
+            </div>
+            <div className="metadata-field">
+              <div className="sub-title">Output message:</div>
+              {getParsedMetadata(selectedActivityItem.actionOutputMetadata)}
             </div>
           </div>
         </div>

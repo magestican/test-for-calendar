@@ -4,6 +4,7 @@ export  let activityLogReducerInitialState = {
   activityLogState : {
     selectedActivityItem:{},
     currentSearch: '',
+    calendarControllerVisible : false,
     currentlySelectedDateFilterEnd : moment().unix() * 1000,
     currentlySelectedDateFilterStart : moment().unix() * 1000, //data can only be stored in localstorage in unix format, in order to be retrieved from cache
     currentlySelectedStatusFilter : 'allStatuses',

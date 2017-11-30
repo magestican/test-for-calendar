@@ -19,11 +19,25 @@ const store = createStore(rootReducer,(sessionStorage.savedReduxState
 window.onunload = function () {
   sessionStorage.savedReduxState = JSON.stringify(store.getState());
 }
+
+
+function extractUrlValue(key)
+{
+    let url = window.location.href;
+    let match = url.match('[?&]' + key + '=([^&]+)');
+    return match ? match[1] : null;
+}
+
+let apiEndpoint = extractUrlValue('apiendpoint');
+let activityLog = extractUrlValue('activitylog');
+
+console.log(apiEndpoint);
+console.log(activityLog);
 if (!window.ActivityAPP){
   window.ActivityAPP = {
-    apiEndpoint : './',//important to end with /
+    apiEndpoint : (apiEndpoint || './'),//important to end with /
     apis: {
-      activityLog : 'activityLog.json'
+      activityLog : (activityLog || 'activityLog.json')
     }
   };
 }

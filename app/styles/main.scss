@@ -1,9 +1,10 @@
-$hover-color: #efefef;
+$hover-color: #f4f4f4;
 $app-color: #629644;
-
+$bad-things-color: #d84e42;
 @import "mixins";
 @import "animations";
 @import "global";
+@import "modals";
 body{
   background-color: #e7eaee;
 }
