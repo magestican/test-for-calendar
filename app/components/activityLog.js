@@ -155,8 +155,8 @@ export default class ActivityLog extends Component {
           <div>
             <div className="sub-title">Users involved in action</div>
             <div>
-              {selectedActivityItem.otherWhoUsers.map((o) => {
-                return o;
+              {selectedActivityItem.otherWhoUsers.map((o,i) => {
+                return o + (i == selectedActivityItem.otherWhoUsers.length -1 ? '' : ', ');
               })}
             </div>
 
